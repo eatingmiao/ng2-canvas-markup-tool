@@ -1,0 +1,18 @@
+.canvas-icon {
+  display: inline-block;
+  font-size: 3em;
+  font-family: "Ionicons";
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: normal;
+  line-height: 1;
+  text-rendering: auto;
+  text-transform: none;
+  speak: none;
+}
+
+.draw-icon:before {
+  content: "\f102";
+}
