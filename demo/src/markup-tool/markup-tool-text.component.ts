@@ -23,6 +23,8 @@ export class MarkupToolTextComponent {
     
     private _startPoint: EventPositionPoint;
 
+    private _textHistory: MarkupToolUpdate[] = []; 
+
     constructor() {
 
     }
@@ -73,6 +75,11 @@ export class MarkupToolTextComponent {
             return update.UUID !== uuid;
         })
         this.updates = newLayers;
+
+        let textHistory = this._textHistory.filter(update => {
+            return update.UUID !== uuid
+        });
+        this._textHistory = textHistory;
     }
 
     redrawBackground(callbackFn?: any): void {
@@ -83,7 +90,7 @@ export class MarkupToolTextComponent {
     private _draw(update: MarkupToolUpdate, canvas: ElementRef, x: number, y: number): void {
         let context = canvas.nativeElement.getContext("2d");
 
-        context.textBaseline="middle";
+        context.textBaseline = "middle";
 
         if(update.type === 1) {
             context.strokeStyle = 'rgba(77,177,254, .6)';
@@ -120,5 +127,22 @@ export class MarkupToolTextComponent {
         context.closePath();
         context.stroke();
         context.restore();
+    }
+
+    addHistory(update: MarkupToolUpdate): void {
+        this._textHistory.push(update);
+    }
+
+    getHistory(): MarkupToolUpdate[] {
+        return this._textHistory;
+    }
+
+    clearHistory(): void {
+        this._textHistory = [];
+        this.redrawBackground();
+    }
+
+    getLayer(): QueryList<MarkupToolLayerComponent> {
+        return this.layers;
     }
 }

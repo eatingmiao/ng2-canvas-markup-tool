@@ -12,7 +12,7 @@ export const DEFAULT_TEMPLATE = `
          </button>
     </span>
 
-    <div class="canvas-wrapper" 
+    <div class="canvas-wrapper" (window:resize)="reloadCanvas()"
         (mousedown)="canvasUserEvents($event)" (mouseup)="canvasUserEvents($event)"
         (mousemove)="canvasUserEvents($event)" (mouseout)="canvasUserEvents($event)"
         (touchstart)="canvasUserEvents($event)" (touchmove)="canvasUserEvents($event)"
@@ -22,7 +22,7 @@ export const DEFAULT_TEMPLATE = `
       <markup-tool-pattern [width]="canvasWidth" [height]="canvasHeight"></markup-tool-pattern>
       <markup-tool-text [width]="canvasWidth" [height]="canvasHeight"></markup-tool-text>
       <markup-tool-image [width]="canvasWidth" [height]="canvasHeight"></markup-tool-image>
-      <markup-tool-layer [width]="canvasWidth" [height]="canvasHeight"></markup-tool-layer>
+      <canvas [hidden]="true" width="{{canvasWidth}}" height="{{canvasHeight}}" #exportCanvas></canvas>
     </div>
 
     <div class="canvas-tool">
@@ -92,6 +92,7 @@ export const DEFAULT_STYLES = `
   background-color: transparent;
 }
 .canvas-wrapper {
+  width: 100%;
   left: 50%;
   top: 50%;
   position: absolute;

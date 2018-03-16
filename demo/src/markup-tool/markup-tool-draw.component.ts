@@ -11,7 +11,7 @@ export class MarkupToolDrawComponent implements AfterViewInit {
     @Input() width: number;
     @Input() height: number;
 
-    @ViewChild(MarkupToolLayerComponent) layer: any;
+    @ViewChild(MarkupToolLayerComponent) layer: MarkupToolLayerComponent;
     context: CanvasRenderingContext2D;
 
     private _drawHistory: MarkupToolUpdate[] = [];  
@@ -50,6 +50,13 @@ export class MarkupToolDrawComponent implements AfterViewInit {
         this.context.restore();
     }
 
+    remove(uuid: string): void {
+        let drawHistory = this._drawHistory.filter(update => {
+            return update.UUID !== uuid
+        });
+        this._drawHistory = drawHistory;
+    }
+
     addHistory(update: MarkupToolUpdate): void {
         this._drawHistory.push(update);
     }
@@ -58,16 +65,18 @@ export class MarkupToolDrawComponent implements AfterViewInit {
         return this._drawHistory;
     }
 
-    remove(uuid: string): void {
-        let drawHistory = this._drawHistory.filter(update => {
-            return update.UUID !== uuid
-        });
-        this._drawHistory = drawHistory;
+    clearHistory(): void {
+        this._drawHistory = [];
+        this.redrawBackground();
     }
 
     redrawBackground(callbackFn?: any): void {
         this.context.setTransform(1, 0, 0, 1, 0, 0);
         this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
         callbackFn && callbackFn();
+    }
+
+    getLayer(): MarkupToolLayerComponent {
+        return this.layer;
     }
 }

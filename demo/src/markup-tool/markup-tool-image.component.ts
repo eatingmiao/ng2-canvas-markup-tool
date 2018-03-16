@@ -20,6 +20,8 @@ export class MarkupToolImageComponent {
     
     private _startPoint: EventPositionPoint;
 
+    private _imageHistory: MarkupToolUpdate[] = [];  
+
     constructor() {
 
     }
@@ -71,6 +73,11 @@ export class MarkupToolImageComponent {
             return update.UUID !== uuid;
         })
         this.updates = newLayers;
+
+        let imageHistory = this._imageHistory.filter(update => {
+            return update.UUID !== uuid
+        });
+        this._imageHistory = imageHistory;
     }
 
     redrawBackground(callbackFn?: any): void {
@@ -82,23 +89,44 @@ export class MarkupToolImageComponent {
         let context = canvas.nativeElement.getContext("2d");
 
         let imageElement = new Image();
+        imageElement.addEventListener("load", () => {
+            context.strokeStyle = 'rgba(77,177,254, 0)';
+
+            context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+            context.save();
+            context.beginPath();
+
+            let width = context.canvas.width / 10;
+
+            context.rect(x-15, y-15, width+2, width+2);
+            context.drawImage(imageElement, x-15, y-15, width, width);
+        });
+
         if(this.isMoving) {
             imageElement.src = this._url;
         } else {
             imageElement.src = update.icon;
         }
         
-        context.strokeStyle = 'rgba(77,177,254, 0)';
-
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-        context.save();
-        context.beginPath();
-
-        context.rect(x-15, y-15, 32, 32);
-        context.drawImage(imageElement, x-15, y-15, 30, 30);
-
         context.closePath();
         context.stroke();
         context.restore();
+    }
+
+    addHistory(update: MarkupToolUpdate): void {
+        this._imageHistory.push(update);
+    }
+
+    getHistory(): MarkupToolUpdate[] {
+        return this._imageHistory;
+    }
+
+    clearHistory(): void {
+        this._imageHistory = [];
+        this.redrawBackground();
+    }
+
+    getLayer(): QueryList<MarkupToolLayerComponent> {
+        return this.layers;
     }
 }

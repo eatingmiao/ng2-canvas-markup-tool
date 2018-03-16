@@ -19,7 +19,7 @@ export class HomePage {
       clearButtonText: "Clear",
       undoButtonText: "Undo",
       undoButtonEnabled: true,
-      saveDataButtonEnabled: false,
+      saveDataButtonEnabled: true,
       saveDataButtonText: "Save",
       iconList: [
         {id: 1, url:'assets/imgs/no.svg'},
@@ -32,6 +32,24 @@ export class HomePage {
 
   constructor(public navCtrl: NavController, private config: Config) {
 
+  }
+
+  onCanvasSave(updateUUID: string) {
+    // console.log(`UNDO with uuid: ${updateUUID}`);
+    
+    // //Returns base64 string representation of the canvas
+    // let generatedString = this.markupTool.generateCanvasDataUrl("image/jpeg", 0.3);
+     
+    // //Generates a IE canvas blob using a callbak method
+    // this.markupTool.generateCanvasBlob((blob: any) => {
+    //    console.log(blob);
+    // }, "image/png");
+    
+    // //This method uses both of the above method and returns either string or blob
+    // //using a callback method
+    // this.markupTool.generateCanvasData((generatedData: string | Blob) => {
+    //   console.log(generatedData);
+    // }, "image/png", 1);
   }
 
   ngOnInit() {

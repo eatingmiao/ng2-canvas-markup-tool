@@ -23,6 +23,8 @@ export class MarkupToolPatternComponent {
     
     private _startPoint: EventPositionPoint;
 
+    private _patternHistory: MarkupToolUpdate[] = [];  
+
     constructor() {
 
     }
@@ -75,6 +77,11 @@ export class MarkupToolPatternComponent {
             return update.UUID !== uuid;
         })
         this.updates = newLayers;
+        
+        let patternHistory = this._patternHistory.filter(update => {
+            return update.UUID !== uuid
+        });
+        this._patternHistory = patternHistory;
     }
 
     redrawBackground(callbackFn?: any): void {
@@ -184,5 +191,22 @@ export class MarkupToolPatternComponent {
             context.moveTo(arrowX, arrowY);
             context.lineTo(toX, toY);
         }
+    }
+
+    addHistory(update: MarkupToolUpdate): void {
+        this._patternHistory.push(update);
+    }
+
+    getHistory(): MarkupToolUpdate[] {
+        return this._patternHistory;
+    }
+
+    clearHistory(): void {
+        this._patternHistory = [];
+        this.redrawBackground();
+    }
+
+    getLayer(): QueryList<MarkupToolLayerComponent> {
+        return this.layers;
     }
 }

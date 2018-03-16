@@ -105,6 +105,8 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
     @ViewChild(MarkupToolPatternComponent) patternComponent: MarkupToolPatternComponent;
     @ViewChild(MarkupToolTextComponent) textComponent: MarkupToolTextComponent;
     @ViewChild(MarkupToolImageComponent) imageComponent: MarkupToolImageComponent;
+    @ViewChild('exportCanvas') canvas: ElementRef;
+    context: CanvasRenderingContext2D;
 
     public toolType: number = 0;
 
@@ -127,12 +129,11 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
 
     ngOnInit(): void {
         this._initInputsFromOptions(this.options);
-        this._initCanvasEventListeners();
     }
 
     ngAfterViewInit(): void {
-        this._loadImageAndCanvas();
         this._isSupportTouch();
+        this._loadImageAndCanvas();
     }
 
     private _initInputsFromOptions(options: MarkupToolOptions) {
@@ -179,18 +180,82 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
         }
     }
 
-    private _initCanvasEventListeners(): void {
-        window.addEventListener("keydown", this._canvasKeyDown.bind(this), false);
-    }
-
     ngOnChanges(changes: any): void {
         if (changes.options && changes.options.currentValue != changes.options.previousValue) {
             this._initInputsFromOptions(changes.options.currentValue);
         }
     }
 
+    reloadCanvas(): void {
+        if(this.toolType > 0) {
+            this._calculateCanvasWidthAndHeight();
+            this._isSupportTouch();
+            this._redrawHistory();
+            this.isTexting = false;
+        }
+    }
+
+    private _redrawHistory(): void {
+        let length = this._aspectRatio.length;
+        let ratio = this._aspectRatio[length - 1];
+        let lastRatio = this._aspectRatio[length - 2];
+
+        if(this.drawComponent.getHistory().length) {
+            this.drawComponent.redrawBackground(() => {
+                this.drawComponent.getHistory()
+                    .forEach((update: MarkupToolUpdate) => {
+                        update.x = update.x * ratio / lastRatio;
+                        update.y = update.y * ratio / lastRatio;
+                        setTimeout(()=> {
+                            this._draw(update, true);
+                        }, 100);
+                    });
+            });
+        }
+        
+        if(this.textComponent.getHistory().length) {
+            this.textComponent.redrawBackground(() => {
+                this.textComponent.getHistory()
+                    .forEach((update: MarkupToolUpdate) => {
+                        update.fontSize = update.fontSize * ratio / lastRatio;
+                        update.x = update.x * ratio / lastRatio;
+                        update.y = update.y * ratio / lastRatio;
+                        setTimeout(()=> {
+                            this._draw(update, true);
+                        }, 100);
+                    });
+            });
+        }
+        
+
+        if(this.patternComponent.getHistory().length) {
+            this.patternComponent.redrawBackground(() => {
+                this.patternComponent.getHistory()
+                    .forEach((update: MarkupToolUpdate) => {
+                        update.x = update.x * ratio / lastRatio;
+                        update.y = update.y * ratio / lastRatio;
+                        setTimeout(()=> {
+                            this._draw(update, true);
+                        }, 100);
+                    });
+            });
+        }
+
+        if(this.imageComponent.getHistory().length) {
+            this.imageComponent.redrawBackground(() => {
+                this.imageComponent.getHistory()
+                    .forEach((update: MarkupToolUpdate) => {
+                        update.x = update.x * ratio / lastRatio;
+                        update.y = update.y * ratio / lastRatio;
+                        this._draw(update, true);
+                    });
+            });
+        }      
+    }
+
     private _loadImageAndCanvas(callbackFn?: any): void {
         this.imageElement.nativeElement.addEventListener("load", () => {
+            this.context = this.canvas.nativeElement.getContext("2d");
             this._calculateCanvasWidthAndHeight();
             callbackFn && callbackFn();
         });
@@ -206,6 +271,8 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
         let radius = width / orgWidth;
         radius = Math.floor(radius * 100) / 100;
 
+        this._aspectRatio.push(radius);
+
         this.canvasWidth = orgWidth * radius;
         this.canvasHeight = orgHeight * radius;
     }
@@ -220,15 +287,12 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     private _removeCanvasData(): void {
+        this._undoStack = [];
         this._clientDragging = false;
-        this._redrawBackground();
-    }
-
-    private _redrawBackground(): void {
-        this.drawComponent.redrawBackground();
-        this.patternComponent.redrawBackground();
-        this.textComponent.redrawBackground();
-        this.imageComponent.redrawBackground();
+        this.drawComponent.clearHistory();
+        this.patternComponent.clearHistory();
+        this.textComponent.clearHistory();
+        this.imageComponent.clearHistory();
     }
 
     toggleTool(type: number) {
@@ -358,15 +422,6 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
         }
     }
 
-    private _canvasKeyDown(event: any): void {
-        if (event.ctrlKey || event.metaKey) {
-            if (event.keyCode === 90 && this.undoButtonEnabled) {
-                event.preventDefault();
-                this.undo();
-            }
-        }
-    }
-
     private _draw(update: MarkupToolUpdate, isHistory?: boolean): void {
         switch(update.toolType) {
             case 1:
@@ -385,6 +440,9 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
                 break;
 
             case 2:
+                if(!isHistory) {
+                    this.textComponent.addHistory(update);
+                }
                 if (update.type === UPDATE_TYPE.start) {
                     this.textComponent.canMove(update);
                     this.textComponent.start(update);
@@ -392,17 +450,21 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
                     this.textComponent.move(update);
                 } else if (update.type === UPDATE_TYPE.stop) {
                     if(!this.textComponent.isMoving) {
-                        this.isTexting = true;
-                        let done = this._onTextComplete.subscribe(text => {
-                            update.text = text;
-                            if(text) {
-                                this.textComponent.add(update);
-                                if(!isHistory) this._undoStack.push(update);
-                            } else {
-                                this.textComponent.remove(update.UUID);
-                            }
-                            done.unsubscribe();
-                        });
+                        if(!isHistory) {
+                            this.isTexting = true;
+                            let done = this._onTextComplete.subscribe(text => {
+                                update.text = text;
+                                if(text) {
+                                    this.textComponent.add(update);
+                                    this._undoStack.push(update);
+                                } else {
+                                    this.textComponent.remove(update.UUID);
+                                }
+                                done.unsubscribe();
+                            });
+                        } else {
+                            this.textComponent.add(update);
+                        }
                     } else {
                         this.textComponent.move(update);
                         this.textComponent.isMoving = false;
@@ -412,6 +474,9 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
                 break;
 
             case 3:
+                if(!isHistory) {
+                    this.patternComponent.addHistory(update);
+                }
                 if (update.type === UPDATE_TYPE.start) {
                     if(this.shape < 3) {
                         this.patternComponent.canMove(update);
@@ -445,11 +510,17 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
                             if(this.icon === e.id) {
                                 update.icon = e.url;
                                 this.imageComponent.add(update);
-                                if(!isHistory) this._undoStack.push(update);
+                                if(!isHistory) {
+                                    this._undoStack.push(update);
+                                    this.imageComponent.addHistory(update);
+                                }
                             }
                         });  
-                    }
-                    this.imageComponent.isMoving = false;
+                    } else {
+                        this.imageComponent.move(update);
+                        this.imageComponent.remove(update.UUID);
+                        this.imageComponent.isMoving = false;
+                    } 
                     delete this._lastPositionForUUID[update.UUID];
                 }
                 break;
@@ -461,5 +532,83 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
                 y: update.y
             };
         }
+    }
+
+    generateCanvasDataUrl(returnedDataType: string = "image/png", returnedDataQuality: number = 1): string {
+        return this.context.canvas.toDataURL(returnedDataType, returnedDataQuality);
+    }
+
+    generateCanvasBlob(callbackFn: any, returnedDataType: string = "image/png", returnedDataQuality: number = 1): void {
+        this.context.canvas.toBlob((blob: Blob) => {
+            callbackFn && callbackFn(blob, returnedDataType);
+        }, returnedDataType, returnedDataQuality);
+    }
+
+    downloadCanvasImage(returnedDataType: string = "image/png", downloadData?: string | Blob): void {
+        if (window.navigator.msSaveOrOpenBlob === undefined) {
+            let downloadLink = document.createElement('a');
+            downloadLink.setAttribute('href', downloadData ? <string>downloadData : this.generateCanvasDataUrl(returnedDataType));
+            downloadLink.setAttribute('download', "canvas_drawing_" + new Date().valueOf() + this._generateDataTypeString(returnedDataType));
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        } else {
+            // IE-specific code
+            if (downloadData) {
+                this._saveCanvasBlob(<Blob>downloadData, returnedDataType);
+            } else {
+                this.generateCanvasBlob(this._saveCanvasBlob.bind(this), returnedDataType);
+            }
+        }
+    }
+
+    private _saveCanvasBlob(blob: Blob, returnedDataType: string = "image/png"): void {
+        window.navigator.msSaveOrOpenBlob(blob, "canvas_drawing_" + new Date().valueOf() + this._generateDataTypeString(returnedDataType));
+    }
+
+    generateCanvasData(callback: any, returnedDataType: string = "image/png", returnedDataQuality: number = 1): void {
+        if (window.navigator.msSaveOrOpenBlob === undefined) {
+            callback && callback(this.generateCanvasDataUrl(returnedDataType, returnedDataQuality))
+        } else {
+            this.generateCanvasBlob(callback, returnedDataType, returnedDataQuality);
+        }
+    }
+
+    saveLocal(returnedDataType: string = "image/png"): void {
+        this.context.drawImage(this.imageElement.nativeElement, 0, 0, this.canvasWidth, this.canvasHeight);
+        let draw = this.drawComponent.getLayer().canvas.nativeElement;
+        this.context.drawImage(draw, 0, 0);
+
+        this.patternComponent.getLayer().forEach(l => {
+            let pattern = l.canvas.nativeElement;
+            this.context.drawImage(pattern, 0, 0);
+        });
+
+        this.textComponent.getLayer().forEach(l => {
+            let text = l.canvas.nativeElement;
+            this.context.drawImage(text, 0, 0);
+        });
+
+        this.imageComponent.getLayer().forEach(l => {
+            let img = l.canvas.nativeElement;
+            this.context.drawImage(img, 0, 0);
+        });
+
+        setTimeout(() => {
+            this.generateCanvasData((generatedData: string | Blob) => {
+                this.onSave.emit(generatedData); d
+                if (this.shouldDownloadDrawing) {
+                    this.downloadCanvasImage(returnedDataType, generatedData);         
+                }
+            });
+        });
+    }
+
+    private _generateDataTypeString(returnedDataType: string): string {
+        if (returnedDataType) {
+            return "." + returnedDataType.split('/')[1];
+        }
+
+        return "";
     }
 }
