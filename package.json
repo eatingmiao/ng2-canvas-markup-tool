@@ -1,0 +1,43 @@
+{
+  "name": "ng2-canvas-markup-tool",
+  "version": "1.0.0",
+  "description": "A Canvas component for Angular2 which supports free drawing.",
+  "main": "index.js",
+  "scripts": {
+    "watch": "tsc -w",
+    "build": "rm -rf dist && ngc"
+  },
+  "files": [
+    "dist",
+    "index.js",
+    "index.d.ts"
+  ],
+  "typings": "index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "webfactory",
+  "license": "MIT",
+  "keywords": [
+    "angular2",
+    "angular",
+    "angular4",
+    "canvas",
+    "drawing",
+    "touch drawing",
+    "whiteboard",
+    "colorpicker",
+    "canvas colorpicker"
+  ],
+  "dependencies": {
+    "typescript": "2.4.2"
+  },
+  "devDependencies": {
+    "@angular/common": "5.0.3",
+    "@angular/compiler": "5.0.3",
+    "@angular/compiler-cli": "5.0.3",
+    "@angular/core": "5.0.3",
+    "@angular/forms": "5.0.3"
+  }
+}

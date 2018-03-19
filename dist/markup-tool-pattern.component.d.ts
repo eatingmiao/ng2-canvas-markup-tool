@@ -1,0 +1,31 @@
+import { QueryList } from '@angular/core';
+import { MarkupToolUpdate, EventPositionPoint } from "./markup-tool-update.model";
+import { MarkupToolLayerComponent } from "./markup-tool-layer.component";
+export declare class MarkupToolPatternComponent {
+    width: number;
+    height: number;
+    layers: QueryList<MarkupToolLayerComponent>;
+    updates: Array<MarkupToolUpdate>;
+    isMoving: boolean;
+    private _moveRect;
+    private _shapeWidth;
+    private _shape;
+    private _strokeColor;
+    private _lineWidth;
+    private _startPoint;
+    private _patternHistory;
+    constructor();
+    start(update: MarkupToolUpdate): void;
+    add(update: MarkupToolUpdate): void;
+    canMove(update: MarkupToolUpdate): void;
+    move(update: MarkupToolUpdate, lastPosition?: EventPositionPoint): void;
+    remove(uuid: string): void;
+    redrawBackground(callbackFn?: any): void;
+    private _draw(update, canvas, x, y, lastPosition?);
+    private _drawLine(context, toX, toY, lastPosition?);
+    private _drawArrow(context, toX, toY, lastPosition?);
+    addHistory(update: MarkupToolUpdate): void;
+    getHistory(): MarkupToolUpdate[];
+    clearHistory(): void;
+    getLayer(): QueryList<MarkupToolLayerComponent>;
+}

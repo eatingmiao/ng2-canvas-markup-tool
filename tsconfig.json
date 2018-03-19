@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "skipLibCheck": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "declaration": true,
+    "outDir": "dist",
+    "lib":  ["es5", "dom", "es6", "es2015.iterable", "es7"],
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@angular/common": ["../node_modules/@angular/common"],
+      "@angular/compiler": ["../node_modules/@angular/compiler"],
+      "@angular/core": ["../node_modules/@angular/core"],
+      "@angular/forms": ["../node_modules/@angular/forms"]
+    }
+  },
+  "files": [
+    "./src/markup-tool.module.ts"
+  ],
+  "exclude": [
+    "build",
+    "node_modules",
+    "index.ts",
+    "index.js",
+    "index.d.ts"
+  ],
+  "angularCompilerOptions": {
+    "genDir": "../aot",
+    "skipMetadataEmit": false,
+    "skipTemplateCodegen": true,
+    "strictMetadataEmit": true
+  }
+}

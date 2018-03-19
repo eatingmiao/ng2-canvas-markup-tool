@@ -575,30 +575,38 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     saveLocal(returnedDataType: string = "image/png"): void {
-        this.context.drawImage(this.imageElement.nativeElement, 0, 0, this.canvasWidth, this.canvasHeight);
+        let image = this.imageElement.nativeElement;
+
+        let orgWidth = image.naturalWidth;
+        let orgHeight = image.naturalHeight;
+
+        this.canvas.nativeElement.width = orgWidth;
+        this.canvas.nativeElement.height = orgHeight;
+
+        this.context.drawImage(image, 0, 0, orgWidth, orgHeight);
         let draw = this.drawComponent.getLayer().canvas.nativeElement;
-        this.context.drawImage(draw, 0, 0);
+        this.context.drawImage(draw, 0, 0, orgWidth, orgHeight);
 
         this.patternComponent.getLayer().forEach(l => {
             let pattern = l.canvas.nativeElement;
-            this.context.drawImage(pattern, 0, 0);
+            this.context.drawImage(pattern, 0, 0, orgWidth, orgHeight);
         });
 
         this.textComponent.getLayer().forEach(l => {
             let text = l.canvas.nativeElement;
-            this.context.drawImage(text, 0, 0);
+            this.context.drawImage(text, 0, 0, orgWidth, orgHeight);
         });
 
         this.imageComponent.getLayer().forEach(l => {
             let img = l.canvas.nativeElement;
-            this.context.drawImage(img, 0, 0);
+            this.context.drawImage(img, 0, 0, orgWidth, orgHeight);
         });
 
         setTimeout(() => {
             this.generateCanvasData((generatedData: string | Blob) => {
-                this.onSave.emit(generatedData); d
+                this.onSave.emit(generatedData);
                 if (this.shouldDownloadDrawing) {
-                    this.downloadCanvasImage(returnedDataType, generatedData);         
+                    this.downloadCanvasImage(returnedDataType, generatedData);   
                 }
             });
         });
