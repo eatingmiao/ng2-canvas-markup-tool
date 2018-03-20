@@ -12,7 +12,7 @@ export const DEFAULT_TEMPLATE = `
          </button>
     </span>
 
-    <div class="canvas-wrapper" (window:resize)="reloadCanvas()"
+    <div class="canvas-wrapper"
         (mousedown)="canvasUserEvents($event)" (mouseup)="canvasUserEvents($event)"
         (mousemove)="canvasUserEvents($event)" (mouseout)="canvasUserEvents($event)"
         (touchstart)="canvasUserEvents($event)" (touchmove)="canvasUserEvents($event)"
@@ -31,16 +31,16 @@ export const DEFAULT_TEMPLATE = `
                 <i [class]="drawButtonClass" aria-hidden="true"></i>
                 {{drawButtonText}}
             </button>
-            <button *ngIf="drawButtonEnabled" (click)="toggleTool(2)" [class.actived]="getCurrentType(2)" type="button">
-                <i [class]="drawButtonClass" aria-hidden="true"></i>
+            <button *ngIf="textButtonEnabled" (click)="toggleTool(2)" [class.actived]="getCurrentType(2)" type="button">
+                <i [class]="textButtonClass" aria-hidden="true"></i>
                 {{textButtonText}}
             </button>
-            <button *ngIf="drawButtonEnabled" (click)="toggleTool(3)" [class.actived]="getCurrentType(3)" type="button">
-                <i [class]="drawButtonClass" aria-hidden="true"></i>
+            <button *ngIf="patternButtonEnabled" (click)="toggleTool(3)" [class.actived]="getCurrentType(3)" type="button">
+                <i [class]="patternButtonClass" aria-hidden="true"></i>
                 {{patternButtonText}}
             </button>
-            <button *ngIf="drawButtonEnabled" (click)="toggleTool(4)" [class.actived]="getCurrentType(4)" type="button">
-                <i [class]="drawButtonClass" aria-hidden="true"></i>
+            <button *ngIf="iconButtonEnabled" (click)="toggleTool(4)" [class.actived]="getCurrentType(4)" type="button">
+                <i [class]="iconButtonClass" aria-hidden="true"></i>
                 {{iconButtonText}}
             </button>
             <button *ngIf="undoButtonEnabled" (click)="undoLocal()" type="button" class="canvas-button-undo">
@@ -68,9 +68,7 @@ export const DEFAULT_TEMPLATE = `
             </div>
         </div>
     </div>
-</div>
-
-`;
+</div>`;
 
 export const DEFAULT_STYLES = `
 .markup-tool {
@@ -97,11 +95,7 @@ export const DEFAULT_STYLES = `
   top: 50%;
   position: absolute;
   transform: translate(-50%, -50%);
-}
-.canvas-wrapper img {
-  width: 100%;
-  left: 0;
-  position: relative;
+  text-align: center;
 }
 .canvas-button-clear {
   float: left;

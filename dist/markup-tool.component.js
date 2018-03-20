@@ -17,6 +17,9 @@ var MarkupToolComponent = (function () {
         this.undoButtonText = "";
         this.saveDataButtonText = "";
         this.drawButtonEnabled = true;
+        this.textButtonEnabled = true;
+        this.iconButtonEnabled = true;
+        this.patternButtonEnabled = true;
         this.clearButtonEnabled = true;
         this.undoButtonEnabled = false;
         this.saveDataButtonEnabled = false;
@@ -28,8 +31,6 @@ var MarkupToolComponent = (function () {
         this.shape = 1;
         this.onClear = new core_1.EventEmitter();
         this.onUndo = new core_1.EventEmitter();
-        this.onBatchUpdate = new core_1.EventEmitter();
-        this.onImageLoaded = new core_1.EventEmitter();
         this.onSave = new core_1.EventEmitter();
         this.toolType = 0;
         this._clientDragging = false;
@@ -51,8 +52,16 @@ var MarkupToolComponent = (function () {
         if (options) {
             if (!this._isNullOrUndefined(options.imageUrl))
                 this.imageUrl = options.imageUrl;
+            if (!this._isNullOrUndefined(options.shouldDownload))
+                this.shouldDownloadDrawing = options.shouldDownload;
             if (!this._isNullOrUndefined(options.drawButtonClass))
                 this.drawButtonClass = options.drawButtonClass;
+            if (!this._isNullOrUndefined(options.patternButtonClass))
+                this.patternButtonClass = options.patternButtonClass;
+            if (!this._isNullOrUndefined(options.textButtonClass))
+                this.textButtonClass = options.textButtonClass;
+            if (!this._isNullOrUndefined(options.iconButtonClass))
+                this.iconButtonClass = options.iconButtonClass;
             if (!this._isNullOrUndefined(options.clearButtonClass))
                 this.clearButtonClass = options.clearButtonClass;
             if (!this._isNullOrUndefined(options.undoButtonClass))
@@ -75,6 +84,12 @@ var MarkupToolComponent = (function () {
                 this.saveDataButtonText = options.saveDataButtonText;
             if (!this._isNullOrUndefined(options.drawButtonEnabled))
                 this.drawButtonEnabled = options.drawButtonEnabled;
+            if (!this._isNullOrUndefined(options.textButtonEnabled))
+                this.textButtonEnabled = options.textButtonEnabled;
+            if (!this._isNullOrUndefined(options.patternButtonEnabled))
+                this.patternButtonEnabled = options.patternButtonEnabled;
+            if (!this._isNullOrUndefined(options.iconButtonEnabled))
+                this.iconButtonEnabled = options.iconButtonEnabled;
             if (!this._isNullOrUndefined(options.clearButtonEnabled))
                 this.clearButtonEnabled = options.clearButtonEnabled;
             if (!this._isNullOrUndefined(options.undoButtonEnabled))
@@ -182,10 +197,20 @@ var MarkupToolComponent = (function () {
     MarkupToolComponent.prototype._calculateCanvasWidthAndHeight = function () {
         var image = this.imageElement.nativeElement;
         var width = image.width;
+        var height = image.height;
         var orgWidth = image.naturalWidth;
         var orgHeight = image.naturalHeight;
         var radius = width / orgWidth;
         radius = Math.floor(radius * 100) / 100;
+        var clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        var heightDiff = Math.abs(height - clientHeight * 0.9);
+        if (height >= clientHeight && heightDiff > 50) {
+            height = clientHeight * 0.9;
+            radius = height / orgHeight;
+            radius = Math.floor(radius * 100) / 100;
+            image.width = orgWidth * radius;
+            image.height = orgHeight * radius;
+        }
         this._aspectRatio.push(radius);
         this.canvasWidth = orgWidth * radius;
         this.canvasHeight = orgHeight * radius;
@@ -509,6 +534,7 @@ var MarkupToolComponent = (function () {
         setTimeout(function () {
             _this.generateCanvasData(function (generatedData) {
                 _this.onSave.emit(generatedData);
+                console.log(_this.shouldDownloadDrawing);
                 if (_this.shouldDownloadDrawing) {
                     _this.downloadCanvasImage(returnedDataType, generatedData);
                 }
@@ -534,6 +560,9 @@ var MarkupToolComponent = (function () {
         "options": [{ type: core_1.Input },],
         "imageUrl": [{ type: core_1.Input },],
         "drawButtonClass": [{ type: core_1.Input },],
+        "textButtonClass": [{ type: core_1.Input },],
+        "iconButtonClass": [{ type: core_1.Input },],
+        "patternButtonClass": [{ type: core_1.Input },],
         "clearButtonClass": [{ type: core_1.Input },],
         "undoButtonClass": [{ type: core_1.Input },],
         "saveDataButtonClass": [{ type: core_1.Input },],
@@ -545,6 +574,9 @@ var MarkupToolComponent = (function () {
         "undoButtonText": [{ type: core_1.Input },],
         "saveDataButtonText": [{ type: core_1.Input },],
         "drawButtonEnabled": [{ type: core_1.Input },],
+        "textButtonEnabled": [{ type: core_1.Input },],
+        "iconButtonEnabled": [{ type: core_1.Input },],
+        "patternButtonEnabled": [{ type: core_1.Input },],
         "clearButtonEnabled": [{ type: core_1.Input },],
         "undoButtonEnabled": [{ type: core_1.Input },],
         "saveDataButtonEnabled": [{ type: core_1.Input },],
@@ -555,8 +587,6 @@ var MarkupToolComponent = (function () {
         "fontSizes": [{ type: core_1.Input },],
         "onClear": [{ type: core_1.Output },],
         "onUndo": [{ type: core_1.Output },],
-        "onBatchUpdate": [{ type: core_1.Output },],
-        "onImageLoaded": [{ type: core_1.Output },],
         "onSave": [{ type: core_1.Output },],
         "imageElement": [{ type: core_1.ViewChild, args: ['image',] },],
         "drawComponent": [{ type: core_1.ViewChild, args: [markup_tool_draw_component_1.MarkupToolDrawComponent,] },],

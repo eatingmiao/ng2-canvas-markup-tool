@@ -18,6 +18,7 @@ import { DEFAULT_TEMPLATE, DEFAULT_STYLES } from "./markup-tool.template";
 
 export interface MarkupToolOptions {
     imageUrl?: string
+    shouldDownload?: boolean
 
     drawButtonEnabled?: boolean
     drawButtonClass?: string
@@ -35,8 +36,16 @@ export interface MarkupToolOptions {
     saveDataButtonClass?: string
     saveDataButtonText?: string
 
+    textButtonEnabled?: boolean
+    textButtonClass?: string
     textButtonText?: string
+
+    patternButtonEnabled?: boolean
+    patternButtonClass?: string
     patternButtonText?: string
+
+    iconButtonEnabled?: boolean
+    iconButtonClass?: string
     iconButtonText?: string
 
     lineWidthList?: Array<number>
@@ -56,6 +65,9 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
     @Input() imageUrl: string;
 
     @Input() drawButtonClass: string;
+    @Input() textButtonClass: string;
+    @Input() iconButtonClass: string;
+    @Input() patternButtonClass: string;
     @Input() clearButtonClass: string;
     @Input() undoButtonClass: string;
     @Input() saveDataButtonClass: string;
@@ -70,6 +82,9 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
     @Input() saveDataButtonText: string = "";
 
     @Input() drawButtonEnabled: boolean = true;
+    @Input() textButtonEnabled: boolean = true;
+    @Input() iconButtonEnabled: boolean = true;
+    @Input() patternButtonEnabled: boolean = true;
     @Input() clearButtonEnabled: boolean = true;
     @Input() undoButtonEnabled: boolean = false;
     @Input() saveDataButtonEnabled: boolean = false;
@@ -92,8 +107,6 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
 
     @Output() onClear = new EventEmitter<any>();
     @Output() onUndo = new EventEmitter<any>();
-    @Output() onBatchUpdate = new EventEmitter<MarkupToolUpdate[]>();
-    @Output() onImageLoaded = new EventEmitter<any>();
     @Output() onSave = new EventEmitter<string | Blob>();
     
     @ViewChild('image') imageElement: ElementRef;
@@ -139,8 +152,13 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
     private _initInputsFromOptions(options: MarkupToolOptions) {
         if (options) {
             if (!this._isNullOrUndefined(options.imageUrl)) this.imageUrl = options.imageUrl;
+            if (!this._isNullOrUndefined(options.shouldDownload)) this.shouldDownloadDrawing = options.shouldDownload;
 
             if (!this._isNullOrUndefined(options.drawButtonClass)) this.drawButtonClass = options.drawButtonClass;
+            if (!this._isNullOrUndefined(options.patternButtonClass)) this.patternButtonClass = options.patternButtonClass;
+            if (!this._isNullOrUndefined(options.textButtonClass)) this.textButtonClass = options.textButtonClass;
+            if (!this._isNullOrUndefined(options.iconButtonClass)) this.iconButtonClass = options.iconButtonClass;
+
             if (!this._isNullOrUndefined(options.clearButtonClass)) this.clearButtonClass = options.clearButtonClass;
             if (!this._isNullOrUndefined(options.undoButtonClass)) this.undoButtonClass = options.undoButtonClass;
             if (!this._isNullOrUndefined(options.saveDataButtonClass)) this.saveDataButtonClass = options.saveDataButtonClass;
@@ -155,6 +173,10 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
             if (!this._isNullOrUndefined(options.saveDataButtonText)) this.saveDataButtonText = options.saveDataButtonText;
 
             if (!this._isNullOrUndefined(options.drawButtonEnabled)) this.drawButtonEnabled = options.drawButtonEnabled;
+            if (!this._isNullOrUndefined(options.textButtonEnabled)) this.textButtonEnabled = options.textButtonEnabled;
+            if (!this._isNullOrUndefined(options.patternButtonEnabled)) this.patternButtonEnabled = options.patternButtonEnabled;
+            if (!this._isNullOrUndefined(options.iconButtonEnabled)) this.iconButtonEnabled = options.iconButtonEnabled;
+
             if (!this._isNullOrUndefined(options.clearButtonEnabled)) this.clearButtonEnabled = options.clearButtonEnabled;
             if (!this._isNullOrUndefined(options.undoButtonEnabled)) this.undoButtonEnabled = options.undoButtonEnabled;
             if (!this._isNullOrUndefined(options.saveDataButtonEnabled)) this.saveDataButtonEnabled = options.saveDataButtonEnabled;
@@ -265,16 +287,28 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
         let image = this.imageElement.nativeElement;
 
         let width = image.width;
+        let height = image.height;
         let orgWidth = image.naturalWidth;
         let orgHeight = image.naturalHeight;
 
         let radius = width / orgWidth;
         radius = Math.floor(radius * 100) / 100;
 
+        let clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        let heightDiff = Math.abs(height - clientHeight * 0.9);
+        if(height >= clientHeight && heightDiff > 50) {
+            height = clientHeight * 0.9;
+            radius = height / orgHeight;
+            radius = Math.floor(radius * 100) / 100;
+            image.width = orgWidth * radius;
+            image.height = orgHeight * radius;
+        }
+
         this._aspectRatio.push(radius);
 
         this.canvasWidth = orgWidth * radius;
         this.canvasHeight = orgHeight * radius;
+        
     }
 
     clearCanvasLocal(): void {
@@ -605,6 +639,7 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
         setTimeout(() => {
             this.generateCanvasData((generatedData: string | Blob) => {
                 this.onSave.emit(generatedData);
+                console.log(this.shouldDownloadDrawing);
                 if (this.shouldDownloadDrawing) {
                     this.downloadCanvasImage(returnedDataType, generatedData);   
                 }

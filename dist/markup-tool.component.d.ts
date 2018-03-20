@@ -1,5 +1,4 @@
 import { EventEmitter, ElementRef, OnInit, OnChanges, AfterViewInit } from '@angular/core';
-import { MarkupToolUpdate } from "./markup-tool-update.model";
 import { MarkupToolDrawComponent } from "./markup-tool-draw.component";
 import { MarkupToolPatternComponent } from "./markup-tool-pattern.component";
 import { MarkupToolTextComponent } from "./markup-tool-text.component";
@@ -7,6 +6,7 @@ import { MarkupToolImageComponent } from "./markup-tool-image.component";
 import { MarkupToolIconEntry } from "./markup-tool-icon.component";
 export interface MarkupToolOptions {
     imageUrl?: string;
+    shouldDownload?: boolean;
     drawButtonEnabled?: boolean;
     drawButtonClass?: string;
     drawButtonText?: string;
@@ -19,8 +19,14 @@ export interface MarkupToolOptions {
     saveDataButtonEnabled?: boolean;
     saveDataButtonClass?: string;
     saveDataButtonText?: string;
+    textButtonEnabled?: boolean;
+    textButtonClass?: string;
     textButtonText?: string;
+    patternButtonEnabled?: boolean;
+    patternButtonClass?: string;
     patternButtonText?: string;
+    iconButtonEnabled?: boolean;
+    iconButtonClass?: string;
     iconButtonText?: string;
     lineWidthList?: Array<number>;
     colorList?: Array<string>;
@@ -31,6 +37,9 @@ export declare class MarkupToolComponent implements OnInit, AfterViewInit, OnCha
     options: MarkupToolOptions;
     imageUrl: string;
     drawButtonClass: string;
+    textButtonClass: string;
+    iconButtonClass: string;
+    patternButtonClass: string;
     clearButtonClass: string;
     undoButtonClass: string;
     saveDataButtonClass: string;
@@ -42,6 +51,9 @@ export declare class MarkupToolComponent implements OnInit, AfterViewInit, OnCha
     undoButtonText: string;
     saveDataButtonText: string;
     drawButtonEnabled: boolean;
+    textButtonEnabled: boolean;
+    iconButtonEnabled: boolean;
+    patternButtonEnabled: boolean;
     clearButtonEnabled: boolean;
     undoButtonEnabled: boolean;
     saveDataButtonEnabled: boolean;
@@ -57,8 +69,6 @@ export declare class MarkupToolComponent implements OnInit, AfterViewInit, OnCha
     shape: number;
     onClear: EventEmitter<any>;
     onUndo: EventEmitter<any>;
-    onBatchUpdate: EventEmitter<MarkupToolUpdate[]>;
-    onImageLoaded: EventEmitter<any>;
     onSave: EventEmitter<string | Blob>;
     imageElement: ElementRef;
     canvasWidth: number;

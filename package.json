@@ -15,7 +15,7 @@
   "typings": "index.d.ts",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/eatingmiao/ng2-canvas-markup-tool.git"
   },
   "author": "webfactory",
   "license": "MIT",
@@ -25,10 +25,7 @@
     "angular4",
     "canvas",
     "drawing",
-    "touch drawing",
-    "whiteboard",
-    "colorpicker",
-    "canvas colorpicker"
+    "markup"
   ],
   "dependencies": {
     "typescript": "2.4.2"

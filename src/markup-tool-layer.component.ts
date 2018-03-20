@@ -5,10 +5,10 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
     template: `<canvas #canvas class="canvas-layer" width="{{width}}" height="{{height}}"></canvas>`,
     styles: [`
         .canvas-layer {
-          width: 100%;
-          left: 0;
-          top: 0;
-          position: absolute;
+            left: 50%;
+            top: 0;
+            position: absolute;
+            transform: translateX(-50%);
         }
     `]
 })

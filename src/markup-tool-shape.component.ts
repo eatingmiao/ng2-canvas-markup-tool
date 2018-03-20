@@ -82,7 +82,7 @@ const DEFAULT_SHAPE_LIST = [
             border-right: 2px solid #fff;
             transform: rotate(45deg);
             position: absolute;
-            right: -1.2px;
+            right: 1px;
             top: 2px;
         }
         a.shape-icon-3 {
@@ -93,7 +93,7 @@ const DEFAULT_SHAPE_LIST = [
         a.shape-icon-3::before {
             content: '';
             display: block;
-            width: 100%;
+            width: 90%;
             height: 2px;
             background-color: #fff;
             position: absolute;
