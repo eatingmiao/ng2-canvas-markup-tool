@@ -9,6 +9,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
             top: 0;
             position: absolute;
             transform: translateX(-50%);
+            -webkit-transform: translateX(-50%);
         }
     `]
 })

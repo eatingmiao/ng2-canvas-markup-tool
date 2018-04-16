@@ -45,7 +45,8 @@ const DEFAULT_SHAPE_LIST = [
             margin: 0 auto;
             position: relative;
             top: 50%;
-            transform: translateY(-50%);  
+            transform: translateY(-50%);
+            -webkit-transform: translateY(-50%);
         }
         a.shape-icon-0 {
             width: 15px;
@@ -81,6 +82,7 @@ const DEFAULT_SHAPE_LIST = [
             border-top: 2px solid #fff;
             border-right: 2px solid #fff;
             transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
             position: absolute;
             right: 1px;
             top: 2px;

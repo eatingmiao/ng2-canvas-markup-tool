@@ -13,6 +13,8 @@ var MarkupToolComponent = (function () {
         this.textButtonText = "";
         this.patternButtonText = "";
         this.iconButtonText = "";
+        this.textClearButton = "";
+        this.textSaveButton = "";
         this.clearButtonText = "";
         this.undoButtonText = "";
         this.saveDataButtonText = "";
@@ -27,7 +29,7 @@ var MarkupToolComponent = (function () {
         this.strokeColor = 'red';
         this.lineWidth = 3;
         this.icon = 1;
-        this.fontSize = 12;
+        this.fontSize = 24;
         this.shape = 1;
         this.onClear = new core_1.EventEmitter();
         this.onUndo = new core_1.EventEmitter();
@@ -39,6 +41,7 @@ var MarkupToolComponent = (function () {
         this._supportTouch = false;
         this.isTexting = false;
         this._onTextComplete = new core_1.EventEmitter();
+        this.onText = new core_1.EventEmitter();
         this._aspectRatio = [];
     }
     MarkupToolComponent.prototype.ngOnInit = function () {
@@ -76,6 +79,10 @@ var MarkupToolComponent = (function () {
                 this.patternButtonText = options.patternButtonText;
             if (!this._isNullOrUndefined(options.iconButtonText))
                 this.iconButtonText = options.iconButtonText;
+            if (!this._isNullOrUndefined(options.textClearButton))
+                this.textClearButton = options.textClearButton;
+            if (!this._isNullOrUndefined(options.textSaveButton))
+                this.textSaveButton = options.textSaveButton;
             if (!this._isNullOrUndefined(options.clearButtonText))
                 this.clearButtonText = options.clearButtonText;
             if (!this._isNullOrUndefined(options.undoButtonText))
@@ -256,6 +263,10 @@ var MarkupToolComponent = (function () {
     MarkupToolComponent.prototype.changeIcon = function (newIcon) {
         this.icon = newIcon;
     };
+    MarkupToolComponent.prototype.textPopoverShow = function () {
+        this.isTexting = true;
+        this.onText.emit(true);
+    };
     MarkupToolComponent.prototype.changeText = function (txt) {
         this.isTexting = false;
         this._onTextComplete.emit(txt);
@@ -373,7 +384,7 @@ var MarkupToolComponent = (function () {
                 else if (update.type === markup_tool_update_model_1.UPDATE_TYPE.stop) {
                     if (!this.textComponent.isMoving) {
                         if (!isHistory) {
-                            this.isTexting = true;
+                            this.textPopoverShow();
                             var done_1 = this._onTextComplete.subscribe(function (text) {
                                 update.text = text;
                                 if (text) {
@@ -534,7 +545,6 @@ var MarkupToolComponent = (function () {
         setTimeout(function () {
             _this.generateCanvasData(function (generatedData) {
                 _this.onSave.emit(generatedData);
-                console.log(_this.shouldDownloadDrawing);
                 if (_this.shouldDownloadDrawing) {
                     _this.downloadCanvasImage(returnedDataType, generatedData);
                 }
@@ -570,6 +580,8 @@ var MarkupToolComponent = (function () {
         "textButtonText": [{ type: core_1.Input },],
         "patternButtonText": [{ type: core_1.Input },],
         "iconButtonText": [{ type: core_1.Input },],
+        "textClearButton": [{ type: core_1.Input },],
+        "textSaveButton": [{ type: core_1.Input },],
         "clearButtonText": [{ type: core_1.Input },],
         "undoButtonText": [{ type: core_1.Input },],
         "saveDataButtonText": [{ type: core_1.Input },],

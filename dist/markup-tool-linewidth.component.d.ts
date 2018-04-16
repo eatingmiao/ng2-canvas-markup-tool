@@ -1,7 +1,7 @@
 import { EventEmitter, OnInit } from '@angular/core';
 export declare class MarkupToolLineWidthComponent implements OnInit {
-    lineWidthList: Array<number>;
     selectedWidth: number;
+    lineWidthList: Array<number>;
     onLineWidthSelected: EventEmitter<number>;
     constructor();
     ngOnInit(): void;

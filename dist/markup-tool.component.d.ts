@@ -22,6 +22,8 @@ export interface MarkupToolOptions {
     textButtonEnabled?: boolean;
     textButtonClass?: string;
     textButtonText?: string;
+    textClearButton?: string;
+    textSaveButton?: string;
     patternButtonEnabled?: boolean;
     patternButtonClass?: string;
     patternButtonText?: string;
@@ -47,6 +49,8 @@ export declare class MarkupToolComponent implements OnInit, AfterViewInit, OnCha
     textButtonText: string;
     patternButtonText: string;
     iconButtonText: string;
+    textClearButton: string;
+    textSaveButton: string;
     clearButtonText: string;
     undoButtonText: string;
     saveDataButtonText: string;
@@ -87,6 +91,7 @@ export declare class MarkupToolComponent implements OnInit, AfterViewInit, OnCha
     private _supportTouch;
     isTexting: boolean;
     private _onTextComplete;
+    onText: EventEmitter<boolean>;
     private _aspectRatio;
     constructor();
     ngOnInit(): void;
@@ -109,6 +114,7 @@ export declare class MarkupToolComponent implements OnInit, AfterViewInit, OnCha
     changeShape(newShape: number): void;
     changeFontSize(newSize: number): void;
     changeIcon(newIcon: number): void;
+    textPopoverShow(): void;
     changeText(txt: string): void;
     undoLocal(): void;
     undo(): void;

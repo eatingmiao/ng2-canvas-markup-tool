@@ -40,6 +40,9 @@ export interface MarkupToolOptions {
     textButtonClass?: string
     textButtonText?: string
 
+    textClearButton?: string
+    textSaveButton?: string
+
     patternButtonEnabled?: boolean
     patternButtonClass?: string
     patternButtonText?: string
@@ -77,6 +80,9 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
     @Input() patternButtonText: string = "";
     @Input() iconButtonText: string = "";
 
+    @Input() textClearButton: string = "";
+    @Input() textSaveButton: string = "";
+
     @Input() clearButtonText: string = "";
     @Input() undoButtonText: string = "";
     @Input() saveDataButtonText: string = "";
@@ -101,7 +107,7 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
     icon: number = 1;
 
     @Input() fontSizes: Array<number>;
-    fontSize: number = 12;
+    fontSize: number = 24;
 
     shape: number = 1;
 
@@ -133,7 +139,8 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
     private _supportTouch: boolean = false;
 
     isTexting: boolean = false;
-    private _onTextComplete: EventEmitter<string> = new EventEmitter<string>(); 
+    private _onTextComplete: EventEmitter<string> = new EventEmitter<string>();
+    onText:  EventEmitter<boolean> = new EventEmitter<boolean>();
 
     private _aspectRatio: Array<number> = [];
 
@@ -167,6 +174,9 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
             if (!this._isNullOrUndefined(options.textButtonText)) this.textButtonText = options.textButtonText;
             if (!this._isNullOrUndefined(options.patternButtonText)) this.patternButtonText = options.patternButtonText;
             if (!this._isNullOrUndefined(options.iconButtonText)) this.iconButtonText = options.iconButtonText;
+
+            if (!this._isNullOrUndefined(options.textClearButton)) this.textClearButton = options.textClearButton;
+            if (!this._isNullOrUndefined(options.textSaveButton)) this.textSaveButton = options.textSaveButton;
 
             if (!this._isNullOrUndefined(options.clearButtonText)) this.clearButtonText = options.clearButtonText;
             if (!this._isNullOrUndefined(options.undoButtonText)) this.undoButtonText = options.undoButtonText;
@@ -361,6 +371,11 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
         this.icon = newIcon;
     }
 
+    textPopoverShow(): void {
+        this.isTexting = true;
+        this.onText.emit(true);
+    }
+
     changeText(txt: string): void {
         this.isTexting = false;
         this._onTextComplete.emit(txt);
@@ -485,7 +500,7 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
                 } else if (update.type === UPDATE_TYPE.stop) {
                     if(!this.textComponent.isMoving) {
                         if(!isHistory) {
-                            this.isTexting = true;
+                            this.textPopoverShow();
                             let done = this._onTextComplete.subscribe(text => {
                                 update.text = text;
                                 if(text) {
@@ -639,7 +654,6 @@ export class MarkupToolComponent implements OnInit, AfterViewInit, OnChanges {
         setTimeout(() => {
             this.generateCanvasData((generatedData: string | Blob) => {
                 this.onSave.emit(generatedData);
-                console.log(this.shouldDownloadDrawing);
                 if (this.shouldDownloadDrawing) {
                     this.downloadCanvasImage(returnedDataType, generatedData);   
                 }

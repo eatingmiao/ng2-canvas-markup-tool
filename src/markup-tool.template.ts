@@ -1,7 +1,7 @@
 export const DEFAULT_TEMPLATE = `
 <div class="markup-tool">
-    <markup-tool-popover class="markup-popover" [cancelBtnText]="clearButtonText" [saveBtnText]="saveDataButtonText" *ngIf="isTexting" (getText)="changeText($event)"></markup-tool-popover>
-    <span>
+    <markup-tool-popover class="markup-popover" [cancelBtn]="textClearButton" [saveBtn]="textSaveButton" *ngIf="isTexting" (getText)="changeText($event)"></markup-tool-popover>
+    <span class="canvas-top-btn">
         <button *ngIf="clearButtonEnabled" (click)="clearCanvasLocal()" type="button" class="canvas-button-clear">
             <i [class]="clearButtonClass" aria-hidden="true"></i>
                     {{clearButtonText}}
@@ -95,7 +95,11 @@ export const DEFAULT_STYLES = `
   top: 50%;
   position: absolute;
   transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
   text-align: center;
+}
+.canvas-top-btn button {
+  margin-top: env(safe-area-inset-top);  
 }
 .canvas-button-clear {
   float: left;
@@ -121,6 +125,7 @@ export const DEFAULT_STYLES = `
 }
 .canvas-tool-detail {
   background-color: rgb(63,70,76);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 .inline {
   display: inline-block;

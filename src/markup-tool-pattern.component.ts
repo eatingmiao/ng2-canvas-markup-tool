@@ -99,6 +99,7 @@ export class MarkupToolPatternComponent {
         if(this.isMoving) {
             shape = this._shape;
             context.lineWidth = this._lineWidth;
+            context.strokeStyle = this._strokeColor;
         }
         if(this.isMoving && update.type === 1) {
             context.strokeStyle = 'rgba(77,177,254, .6)';

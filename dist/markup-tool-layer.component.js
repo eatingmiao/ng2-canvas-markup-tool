@@ -11,7 +11,7 @@ var MarkupToolLayerComponent = (function () {
         { type: core_1.Component, args: [{
                     selector: 'markup-tool-layer',
                     template: "<canvas #canvas class=\"canvas-layer\" width=\"{{width}}\" height=\"{{height}}\"></canvas>",
-                    styles: ["\n        .canvas-layer {\n            left: 50%;\n            top: 0;\n            position: absolute;\n            transform: translateX(-50%);\n        }\n    "]
+                    styles: ["\n        .canvas-layer {\n            left: 50%;\n            top: 0;\n            position: absolute;\n            transform: translateX(-50%);\n            -webkit-transform: translateX(-50%);\n        }\n    "]
                 },] },
     ];
     /** @nocollapse */

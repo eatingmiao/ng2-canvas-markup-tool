@@ -4,12 +4,10 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     selector: 'markup-tool-popover',
     template: `
         <button type="button" class="btn-cancel" (click)="saveText(0)">
-            <i aria-hidden="true"></i>
-                {{cancelBtnText}}
+            {{cancelBtn}}
         </button>
         <button type="button" class="btn-save" (click)="saveText(1)">
-         <i aria-hidden="true"></i>
-            {{saveBtnText}}
+            {{saveBtn}}
         </button>
         <textarea type="text" class="markup-tool-text" [(ngModel)]="txt"></textarea>
         `,
@@ -31,6 +29,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
             position: absolute;
             padding: 10px;
             font-size: 2em;
+            margin-top: env(safe-area-inset-top); 
         }
         .btn-cancel {
             left: 0;
@@ -42,8 +41,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     `]
 })
 export class MarkupToolPopoverComponent {
-    @Input() cancelBtnText: string;
-    @Input() saveBtnText: string;
+    @Input() cancelBtn: string;
+    @Input() saveBtn: string;
     @Input() txt: string;
     @Output() getText = new EventEmitter<string>();
     

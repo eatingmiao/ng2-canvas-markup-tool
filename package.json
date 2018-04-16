@@ -1,7 +1,7 @@
 {
   "name": "ng2-canvas-markup-tool",
   "version": "1.0.0",
-  "description": "A Canvas component for Angular2 which supports free drawing.",
+  "description": "A Canvas component for Angular2 which supports marking up pictures.",
   "main": "index.js",
   "scripts": {
     "watch": "tsc -w",
@@ -10,14 +10,16 @@
   "files": [
     "dist",
     "index.js",
-    "index.d.ts"
+    "index.js.map",
+    "index.d.ts",
+    "index.metadata.json"
   ],
   "typings": "index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/eatingmiao/ng2-canvas-markup-tool.git"
   },
-  "author": "webfactory",
+  "author": "eatingmiao",
   "license": "MIT",
   "keywords": [
     "angular2",

@@ -46,6 +46,7 @@ const DEFAULT_FONT_SIZE_LIST = [
             position: relative;
             top: 50%;
             transform: translateY(-50%);
+            -webkit-transform: translateY(-50%);
         }
         a.font-size-icon-0 {
             font-size: 0.5em;
@@ -64,6 +65,7 @@ export class MarkupToolFontSizeComponent implements OnInit {
     @Output() onFontSizeSelected = new EventEmitter<number>();
 
     constructor() {
+        
     }
 
     ngOnInit() {

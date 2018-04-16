@@ -46,6 +46,7 @@ const DEFAULT_LINE_WIDTH_LIST = [
             position: relative;
             top: 50%;
             transform: translateY(-50%);
+            -webkit-transform: translateY(-50%);
         }
         a.brush-icon-0 {
             width: 5px;
@@ -64,9 +65,9 @@ const DEFAULT_LINE_WIDTH_LIST = [
         }
     `]
 })
-export class MarkupToolLineWidthComponent implements OnInit {
+export class MarkupToolLineWidthComponent implements OnInit {    
+    @Input() selectedWidth: number = 1; 
     @Input() lineWidthList: Array<number>;
-    @Input() selectedWidth: number = 1;
     @Output() onLineWidthSelected = new EventEmitter<number>();
 
     constructor() {
